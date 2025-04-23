@@ -48,7 +48,7 @@ Setup File to your desired location.
  After Copying, now click on the setup you will see an window shown below 
  Click On NO, not this time. Then after NEXT 
  Another Window opens –select Install from a list of specific location and NEXT
-![image alt]()
+![image alt](https://github.com/MARUBOINASINDHUJA/Smart-Parking-System/blob/57abef9c8a6b92b61c9feaa75ae9570c1ce61674/Screenshot%202025-03-20%20221306.png)
 ## REFERENCES 
  John Doe, Jane Smith. "IoT-Based Smart Parking System," IEEE Transactions, 2021. 
  R. Kumar, A. Patel. "Automated Vehicle Parking Management Using Embedded 
