@@ -1,0 +1,144 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+#define IR_IN A0   // IR sensor for entry detection
+#define IR_OUT A1  // IR sensor for exit detection
+#define m1 5       // Motor for entry
+#define m2 6       // Motor for exit
+#define m3 7       // Motor for entry
+#define m4 8       // Motor for exit
+#define PARK_1 A2  // Parking slot 1
+#define PARK_2 A3  // Parking slot 2
+#define PARK_3 3   // Parking slot 3
+#define PARK_4 2   // Parking slot 4
+
+int sf = 0;  // slot full
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(IR_IN, INPUT);
+  pinMode(IR_OUT, INPUT);
+  pinMode(PARK_1, INPUT);
+  pinMode(PARK_2, INPUT);
+  pinMode(PARK_3, INPUT);
+  pinMode(PARK_4, INPUT);
+  pinMode(m1, OUTPUT);
+  pinMode(m2, OUTPUT);
+  pinMode(m3, OUTPUT);
+  pinMode(m4, OUTPUT);
+
+  digitalWrite(m1, LOW);
+  digitalWrite(m2, LOW);
+  digitalWrite(m3, LOW);
+  digitalWrite(m4, LOW);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Parking System");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  int s1 = digitalRead(PARK_1);
+  int s2 = digitalRead(PARK_2);
+  int s3 = digitalRead(PARK_3);
+  int s4 = digitalRead(PARK_4);
+  int in = digitalRead(IR_IN);
+  int out = digitalRead(IR_OUT);
+
+  Serial.print("s1 : ");
+  Serial.print(s1);
+  Serial.print("\ts2 : ");
+  Serial.print(s2);
+  Serial.print("\ts3 : ");
+  Serial.print(s3);
+  Serial.print("\ts4 : ");
+  Serial.print(s4);
+  Serial.print("\tin : ");
+  Serial.print(in);
+  Serial.print("\tout : ");
+  Serial.println(out);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("s1:");
+  lcd.print(s1);
+  lcd.print(" s2:");
+  lcd.print(s2);
+  lcd.print(" s3:");
+  lcd.print(s3);
+  lcd.setCursor(0, 1);
+  lcd.print("s4:");
+  lcd.print(s4);
+  lcd.print(" in:");
+  lcd.print(in);
+  lcd.print(" out:");
+  lcd.print(out);
+  delay(1000);
+
+  if (s1 == 0 && s2 == 0 && s3 == 0 && s4 == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("all full");
+    sf = 1;
+    delay(1000);
+  }
+  if (s1 == 1 || s2 == 1 || s3 == 1 || s4 == 1) {
+    sf = 0;
+  }
+
+  if (in == 0) {
+    open();
+  }
+  if (out == 0) {
+    close();
+  }
+
+  String uno = "a" + String(s1) + "b" + String(s2) + "c" + String(s3) + "d" + String(s4) + "e";
+  Serial.println(uno);
+  delay(1000);
+}
+
+void open() {
+  if (sf == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("in");
+    digitalWrite(m1, LOW);
+    digitalWrite(m2, HIGH);
+    delay(1000);
+    digitalWrite(m1, HIGH);
+    digitalWrite(m2, LOW);
+    delay(1000);
+    digitalWrite(m1, LOW);
+    digitalWrite(m2, LOW);
+  } else {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("all full");
+    lcd.setCursor(0, 1);
+    lcd.print("get lost - pooraaa");
+    digitalWrite(m1, LOW);
+    digitalWrite(m2, LOW);
+    delay(1000);
+  }
+}
+
+void close() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("out");
+  digitalWrite(m3, LOW);
+  digitalWrite(m4, HIGH);
+  delay(1000);
+  digitalWrite(m3, HIGH);
+  digitalWrite(m4, LOW);
+  delay(1000);
+  digitalWrite(m3, LOW);
+  digitalWrite(m4, LOW);
+}
